@@ -1,0 +1,51 @@
+{
+  "name": "@echoes-io/tracker",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./lib/index.js"
+  },
+  "scripts": {
+    "lint": "concurrently npm:lint:* --prefixColors auto",
+    "lint:fix": "biome check --write",
+    "lint:lockfile": "lockfile-lint --path package-lock.json",
+    "lint:engines": "ls-engines",
+    "lint:publish": "publint --strict",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "prepare": "[ \"$CI\" = \"true\" ] || [ \"$GITHUB_ACTIONS\" = \"true\" ] && echo 'Skipping husky' && exit 0 || husky",
+    "clean": "rimraf --glob ./{dist,test}/**/*.{d.ts,js} ./vitest*.{d.ts,js}",
+    "prebuild": "npm run clean",
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "engines": {
+    "node": ">= 20"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "dependencies": {
+    "@echoes-io/models": "^1.0.0",
+    "@echoes-io/utils": "^1.1.1",
+    "better-sqlite3": "^12.4.1",
+    "kysely": "^0.28.8"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.7",
+    "@tsconfig/node22": "^22.0.2",
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^24.9.1",
+    "@vitest/coverage-v8": "^4.0.1",
+    "concurrently": "^9.2.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "lockfile-lint": "^4.14.1",
+    "ls-engines": "^0.9.3",
+    "publint": "^0.3.15",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.1"
+  }
+}
