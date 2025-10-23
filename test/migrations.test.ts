@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { createDatabase } from '../../lib/connection.js';
-import { migrate } from '../../lib/migrations.js';
+import { createDatabase } from '../lib/connection.js';
+import { migrate } from '../lib/migrations.js';
 
 describe('Migrations', () => {
   let db: ReturnType<typeof createDatabase>['db'];
@@ -71,7 +71,7 @@ describe('Migrations', () => {
     await migrate(db);
 
     // Import and call down function
-    const migration = await import('../../migrations/001_initial.js');
+    const migration = await import('../migrations/001_initial.js');
     await migration.down(db);
 
     // Verify tables are dropped

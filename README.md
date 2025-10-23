@@ -392,11 +392,10 @@ Test structure:
 
 ```
 test/
-└── lib/
-    ├── connection.test.ts  # Database connection tests
-    ├── index.test.ts       # Module exports tests
-    ├── migrations.test.ts  # Migration system tests
-    └── tracker.test.ts     # Tracker CRUD operations tests
+├── connection.test.ts  # Database connection tests
+├── index.test.ts       # Module exports tests
+├── migrations.test.ts  # Migration system tests
+└── tracker.test.ts     # Tracker CRUD operations tests
 ```
 
 Current coverage: **~99%** statements, **100%** functions.

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { createDatabase } from '../../lib/connection.js';
+import { createDatabase } from '../lib/connection.js';
 
 describe('Database connection', () => {
   const connections: ReturnType<typeof createDatabase>[] = [];

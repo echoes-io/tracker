@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { Arc, Chapter, Episode, Part, Timeline } from '../../lib/index.js';
-import { Tracker } from '../../lib/index.js';
+import type { Arc, Chapter, Episode, Part, Timeline } from '../lib/index.js';
+import { Tracker } from '../lib/index.js';
 
 describe('Tracker module exports', () => {
   it('should export Tracker class', () => {
