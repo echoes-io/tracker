@@ -8,4 +8,4 @@ export type {
 } from '@echoes-io/models';
 
 // Export Tracker class
-export { Tracker } from './lib/tracker.js';
+export { Tracker } from './tracker.js';

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { Tracker } from '../index.js';
+import { Tracker } from '../lib/index.js';
 
 describe('Tracker', () => {
   let tracker: Tracker;
