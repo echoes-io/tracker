@@ -4,11 +4,9 @@
   "type": "module",
   "license": "MIT",
   "exports": {
-    ".": "./index.js"
+    ".": "./lib/index.js"
   },
   "files": [
-    "index.js",
-    "index.d.ts",
     "lib/**/*.js",
     "lib/**/*.d.ts",
     "migrations/**/*.js",
@@ -26,7 +24,11 @@
     "clean": "rimraf --glob ./{dist,test}/**/*.{d.ts,js} ./vitest*.{d.ts,js}",
     "prebuild": "npm run clean",
     "build": "tsc",
-    "dev": "tsc --watch"
+    "release": "semantic-release"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/echoes-io/tracker.git"
   },
   "engines": {
     "node": ">= 20"
@@ -35,6 +37,21 @@
     "access": "public",
     "provenance": true
   },
+  "release": {
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/changelog",
+      "@semantic-release/npm",
+      "@semantic-release/github",
+      "@semantic-release/git"
+    ]
+  },
+  "author": "Zweer <n.olivieriachille@gmail.com>",
+  "bugs": {
+    "url": "https://github.com/echoes-io/tracker/issues"
+  },
+  "homepage": "https://github.com/echoes-io/tracker#readme",
   "dependencies": {
     "@echoes-io/models": "^1.0.0",
     "@echoes-io/utils": "^1.1.1",
@@ -43,6 +60,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.7",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@tsconfig/node22": "^22.0.2",
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.9.1",
@@ -54,6 +73,7 @@
     "ls-engines": "^0.9.3",
     "publint": "^0.3.15",
     "rimraf": "^6.0.1",
+    "semantic-release": "^25.0.1",
     "typescript": "^5.9.3",
     "vitest": "^4.0.1"
   }
