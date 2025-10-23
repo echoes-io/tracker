@@ -7,8 +7,8 @@ import {
   TimelineSchema,
 } from '@echoes-io/models';
 
-import { migrate } from '../migrations/index.js';
 import { createDatabase } from './connection.js';
+import { migrate } from './migrations.js';
 
 /**
  * Tracker - Database abstraction for Echoes content management
@@ -128,8 +128,7 @@ export class Tracker {
    * ```
    */
   async getTimelines(): Promise<Timeline[]> {
-    const rows = await this.db.selectFrom('timeline').select(['name', 'description']).execute();
-    return rows.map((r) => ({ name: r.name, description: r.description || '' }));
+    return this.db.selectFrom('timeline').select(['name', 'description']).execute();
   }
 
   /**
@@ -147,12 +146,11 @@ export class Tracker {
    * ```
    */
   async getTimeline(name: string): Promise<Timeline | undefined> {
-    const row = await this.db
+    return this.db
       .selectFrom('timeline')
       .select(['name', 'description'])
       .where('name', '=', name)
       .executeTakeFirst();
-    return row ? { name: row.name, description: row.description || '' } : undefined;
   }
 
   /**
@@ -247,7 +245,7 @@ export class Tracker {
       timelineName: r.timelineName,
       name: r.name,
       number: r.number,
-      description: r.description || '',
+      description: r.description,
     }));
   }
 
@@ -278,7 +276,7 @@ export class Tracker {
           timelineName: row.timelineName,
           name: row.name,
           number: row.number,
-          description: row.description || '',
+          description: row.description,
         }
       : undefined;
   }
@@ -392,7 +390,7 @@ export class Tracker {
       number: r.number,
       slug: r.slug,
       title: r.title,
-      description: r.description || '',
+      description: r.description,
     }));
   }
 
@@ -431,7 +429,7 @@ export class Tracker {
           number: row.number,
           slug: row.slug,
           title: row.title,
-          description: row.description || '',
+          description: row.description,
         }
       : undefined;
   }
@@ -558,7 +556,7 @@ export class Tracker {
       number: r.number,
       slug: r.slug,
       title: r.title,
-      description: r.description || '',
+      description: r.description,
     }));
   }
 
@@ -601,7 +599,7 @@ export class Tracker {
           number: row.number,
           slug: row.slug,
           title: row.title,
-          description: row.description || '',
+          description: row.description,
         }
       : undefined;
   }

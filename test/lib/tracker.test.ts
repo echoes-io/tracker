@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 
-import { Tracker } from '../lib/index.js';
+import { Tracker } from '../../lib/index.js';
 
 describe('Tracker', () => {
   let tracker: Tracker;
@@ -428,6 +428,151 @@ describe('Tracker', () => {
       await tracker.deleteTimeline('test');
       const arcs = await tracker.getArcs('test');
       expect(arcs).toHaveLength(0);
+    });
+  });
+
+  describe('Error handling', () => {
+    it('should throw error when updating non-existent timeline', async () => {
+      await expect(tracker.updateTimeline('non-existent', { description: 'Test' })).rejects.toThrow(
+        /Timeline.*not found/,
+      );
+    });
+
+    it('should throw error when updating non-existent arc', async () => {
+      await tracker.createTimeline({ name: 'test', description: 'Test' });
+      await expect(
+        tracker.updateArc('test', 'non-existent', { description: 'Test' }),
+      ).rejects.toThrow(/Arc.*not found/);
+    });
+
+    it('should throw error when updating non-existent episode', async () => {
+      await tracker.createTimeline({ name: 'test', description: 'Test' });
+      await tracker.createArc({
+        timelineName: 'test',
+        name: 'arc-1',
+        number: 1,
+        description: 'Test',
+      });
+      await expect(tracker.updateEpisode('test', 'arc-1', 999, { title: 'Test' })).rejects.toThrow(
+        /Episode.*not found/,
+      );
+    });
+
+    it('should throw error when updating non-existent part', async () => {
+      await tracker.createTimeline({ name: 'test', description: 'Test' });
+      await tracker.createArc({
+        timelineName: 'test',
+        name: 'arc-1',
+        number: 1,
+        description: 'Test',
+      });
+      await tracker.createEpisode({
+        timelineName: 'test',
+        arcName: 'arc-1',
+        number: 1,
+        slug: 'ep-1',
+        title: 'Episode 1',
+        description: 'Test',
+      });
+      await expect(tracker.updatePart('test', 'arc-1', 1, 999, { title: 'Test' })).rejects.toThrow(
+        /Part.*not found/,
+      );
+    });
+
+    it('should throw error when updating non-existent chapter', async () => {
+      await tracker.createTimeline({ name: 'test', description: 'Test' });
+      await tracker.createArc({
+        timelineName: 'test',
+        name: 'arc-1',
+        number: 1,
+        description: 'Test',
+      });
+      await tracker.createEpisode({
+        timelineName: 'test',
+        arcName: 'arc-1',
+        number: 1,
+        slug: 'ep-1',
+        title: 'Episode 1',
+        description: 'Test',
+      });
+      await expect(
+        tracker.updateChapter('test', 'arc-1', 1, 999, { title: 'Test' }),
+      ).rejects.toThrow(/Chapter.*not found/);
+    });
+  });
+
+  describe('Chapter filtering', () => {
+    beforeEach(async () => {
+      await tracker.createTimeline({ name: 'test-timeline', description: 'Test' });
+      await tracker.createArc({
+        timelineName: 'test-timeline',
+        name: 'arc-1',
+        number: 1,
+        description: 'Test Arc',
+      });
+      await tracker.createEpisode({
+        timelineName: 'test-timeline',
+        arcName: 'arc-1',
+        number: 1,
+        slug: 'ep-1',
+        title: 'Episode 1',
+        description: 'Test',
+      });
+      await tracker.createPart({
+        timelineName: 'test-timeline',
+        arcName: 'arc-1',
+        episodeNumber: 1,
+        number: 1,
+        slug: 'part-1',
+        title: 'Part 1',
+        description: 'Test Part',
+      });
+    });
+
+    it('should filter chapters by part', async () => {
+      await tracker.createChapter({
+        timelineName: 'test-timeline',
+        arcName: 'arc-1',
+        episodeNumber: 1,
+        partNumber: 1,
+        number: 1,
+        pov: 'Alice',
+        title: 'Chapter 1',
+        date: new Date('2024-01-01'),
+        excerpt: 'Test',
+        location: 'Test',
+        words: 1000,
+        characters: 5000,
+        charactersNoSpaces: 4000,
+        paragraphs: 10,
+        sentences: 50,
+        readingTimeMinutes: 5,
+      });
+
+      await tracker.createChapter({
+        timelineName: 'test-timeline',
+        arcName: 'arc-1',
+        episodeNumber: 1,
+        partNumber: 1,
+        number: 2,
+        pov: 'Bob',
+        title: 'Chapter 2',
+        date: new Date('2024-01-02'),
+        excerpt: 'Test',
+        location: 'Test',
+        words: 1000,
+        characters: 5000,
+        charactersNoSpaces: 4000,
+        paragraphs: 10,
+        sentences: 50,
+        readingTimeMinutes: 5,
+      });
+
+      const allChapters = await tracker.getChapters('test-timeline', 'arc-1', 1);
+      expect(allChapters).toHaveLength(2);
+
+      const partChapters = await tracker.getChapters('test-timeline', 'arc-1', 1, 1);
+      expect(partChapters).toHaveLength(2);
     });
   });
 });

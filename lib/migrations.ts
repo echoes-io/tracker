@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import type { Kysely } from 'kysely';
 import { sql } from 'kysely';
 
-import type { Database } from '../lib/database.js';
+import type { Database } from './database.js';
 
 export interface Migration {
   up: (db: Kysely<Database>) => Promise<void>;
@@ -29,20 +29,26 @@ async function getExecutedMigrations(db: Kysely<Database>): Promise<Set<string>>
 }
 
 async function loadMigrations(): Promise<Map<string, Migration>> {
-  const migrationsDir = join(fileURLToPath(import.meta.url), '..');
+  const migrationsDir = join(fileURLToPath(import.meta.url), '..', '..', 'migrations');
   const files = await readdir(migrationsDir);
 
   const migrations = new Map<string, Migration>();
+  const seen = new Set<string>();
 
-  for (const file of files.sort()) {
-    // Match only .ts or .js files, but exclude .d.ts and index files
-    if (
-      file.match(/^\d{3}_.*\.(?:ts|js)$/) &&
-      !file.endsWith('.d.ts') &&
-      !file.startsWith('index.')
-    ) {
+  // Sort to prefer .ts over .js (001_initial.ts comes before 001_initial.js)
+  for (const file of files.sort().reverse()) {
+    // Match only .ts or .js files, but exclude .d.ts
+    if (file.match(/^\d{3}_.*\.(?:ts|js)$/) && !file.endsWith('.d.ts')) {
       const name = file.replace(/\.(ts|js)$/, '');
-      const module = await import(`./${file}`);
+
+      // Skip if we already loaded this migration (prefer .ts over .js)
+      if (seen.has(name)) continue;
+      seen.add(name);
+
+      // Use pathToFileURL for proper ESM import
+      const { pathToFileURL } = await import('node:url');
+      const migrationPath = join(migrationsDir, `${name}.js`);
+      const module = await import(pathToFileURL(migrationPath).href);
       migrations.set(name, module);
     }
   }
