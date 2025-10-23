@@ -2,9 +2,18 @@
   "name": "@echoes-io/tracker",
   "version": "0.1.0",
   "type": "module",
+  "license": "MIT",
   "exports": {
-    ".": "./lib/index.js"
+    ".": "./index.js"
   },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib/**/*.js",
+    "lib/**/*.d.ts",
+    "migrations/**/*.js",
+    "migrations/**/*.d.ts"
+  ],
   "scripts": {
     "lint": "concurrently npm:lint:* --prefixColors auto",
     "lint:fix": "biome check --write",

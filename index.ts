@@ -1,18 +1,11 @@
+// Re-export types from @echoes-io/models
 export type {
   Arc,
-  ArcUpdate,
   Chapter,
-  ChapterUpdate,
   Episode,
-  EpisodeUpdate,
-  NewArc,
-  NewChapter,
-  NewEpisode,
-  NewPart,
-  NewTimeline,
   Part,
-  PartUpdate,
   Timeline,
-  TimelineUpdate,
-} from './lib/schemas/index.js';
+} from '@echoes-io/models';
+
+// Export Tracker class
 export { Tracker } from './lib/tracker.js';

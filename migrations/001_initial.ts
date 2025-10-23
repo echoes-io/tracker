@@ -1,13 +1,13 @@
 import type { Kysely } from 'kysely';
 import { sql } from 'kysely';
-import type { Database } from '../lib/schemas/index.js';
+
+import type { Database } from '../lib/database.js';
 
 export async function up(db: Kysely<Database>): Promise<void> {
   await db.schema
     .createTable('timeline')
     .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
     .addColumn('name', 'text', (col) => col.notNull().unique())
-    .addColumn('title', 'text', (col) => col.notNull())
     .addColumn('description', 'text')
     .addColumn('created_at', 'text', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`))
     .addColumn('updated_at', 'text', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`))
@@ -20,9 +20,8 @@ export async function up(db: Kysely<Database>): Promise<void> {
       col.notNull().references('timeline.id').onDelete('cascade'),
     )
     .addColumn('name', 'text', (col) => col.notNull())
-    .addColumn('title', 'text', (col) => col.notNull())
+    .addColumn('number', 'integer', (col) => col.notNull())
     .addColumn('description', 'text')
-    .addColumn('order', 'integer', (col) => col.notNull())
     .addColumn('created_at', 'text', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`))
     .addColumn('updated_at', 'text', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`))
     .execute();
@@ -32,6 +31,7 @@ export async function up(db: Kysely<Database>): Promise<void> {
     .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
     .addColumn('arc_id', 'integer', (col) => col.notNull().references('arc.id').onDelete('cascade'))
     .addColumn('number', 'integer', (col) => col.notNull())
+    .addColumn('slug', 'text', (col) => col.notNull())
     .addColumn('title', 'text', (col) => col.notNull())
     .addColumn('description', 'text')
     .addColumn('created_at', 'text', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`))
@@ -45,6 +45,7 @@ export async function up(db: Kysely<Database>): Promise<void> {
       col.notNull().references('episode.id').onDelete('cascade'),
     )
     .addColumn('number', 'integer', (col) => col.notNull())
+    .addColumn('slug', 'text', (col) => col.notNull())
     .addColumn('title', 'text', (col) => col.notNull())
     .addColumn('description', 'text')
     .addColumn('created_at', 'text', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`))
@@ -54,13 +55,24 @@ export async function up(db: Kysely<Database>): Promise<void> {
   await db.schema
     .createTable('chapter')
     .addColumn('id', 'integer', (col) => col.primaryKey().autoIncrement())
-    .addColumn('episode_id', 'integer', (col) => col.references('episode.id').onDelete('cascade'))
+    .addColumn('episode_id', 'integer', (col) =>
+      col.notNull().references('episode.id').onDelete('cascade'),
+    )
     .addColumn('part_id', 'integer', (col) => col.references('part.id').onDelete('cascade'))
     .addColumn('number', 'integer', (col) => col.notNull())
+    .addColumn('pov', 'text', (col) => col.notNull())
     .addColumn('title', 'text', (col) => col.notNull())
-    .addColumn('content', 'text', (col) => col.notNull())
-    .addColumn('word_count', 'integer', (col) => col.notNull().defaultTo(0))
-    .addColumn('character_count', 'integer', (col) => col.notNull().defaultTo(0))
+    .addColumn('date', 'text', (col) => col.notNull())
+    .addColumn('excerpt', 'text', (col) => col.notNull())
+    .addColumn('location', 'text', (col) => col.notNull())
+    .addColumn('outfit', 'text')
+    .addColumn('kink', 'text')
+    .addColumn('words', 'integer', (col) => col.notNull().defaultTo(0))
+    .addColumn('characters', 'integer', (col) => col.notNull().defaultTo(0))
+    .addColumn('characters_no_spaces', 'integer', (col) => col.notNull().defaultTo(0))
+    .addColumn('paragraphs', 'integer', (col) => col.notNull().defaultTo(0))
+    .addColumn('sentences', 'integer', (col) => col.notNull().defaultTo(0))
+    .addColumn('reading_time_minutes', 'integer', (col) => col.notNull().defaultTo(0))
     .addColumn('created_at', 'text', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`))
     .addColumn('updated_at', 'text', (col) => col.defaultTo(sql`CURRENT_TIMESTAMP`))
     .execute();
