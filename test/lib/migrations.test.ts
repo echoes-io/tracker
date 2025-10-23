@@ -66,4 +66,15 @@ describe('Migrations', () => {
     await expect(db.selectFrom('part').selectAll().execute()).resolves.toBeDefined();
     await expect(db.selectFrom('chapter').selectAll().execute()).resolves.toBeDefined();
   });
+
+  it('should be able to rollback migration', async () => {
+    await migrate(db);
+
+    // Import and call down function
+    const migration = await import('../../migrations/001_initial.js');
+    await migration.down(db);
+
+    // Verify tables are dropped
+    await expect(db.selectFrom('timeline').selectAll().execute()).rejects.toThrow();
+  });
 });

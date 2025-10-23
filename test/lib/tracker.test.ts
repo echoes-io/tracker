@@ -342,6 +342,32 @@ describe('Tracker', () => {
       expect(retrieved?.title).toBe('Chapter 1');
     });
 
+    it('should create chapter with optional outfit and kink', async () => {
+      const chapter = await tracker.createChapter({
+        timelineName: 'test-timeline',
+        arcName: 'arc-1',
+        episodeNumber: 1,
+        partNumber: 1,
+        number: 2,
+        pov: 'Bob',
+        title: 'Chapter 2',
+        date: new Date('2024-01-02'),
+        excerpt: 'Test excerpt',
+        location: 'Test location',
+        outfit: 'Red suit',
+        kink: 'adventure',
+        words: 1000,
+        characters: 5000,
+        charactersNoSpaces: 4000,
+        paragraphs: 10,
+        sentences: 50,
+        readingTimeMinutes: 5,
+      });
+
+      expect(chapter.outfit).toBe('Red suit');
+      expect(chapter.kink).toBe('adventure');
+    });
+
     it('should list chapters', async () => {
       await tracker.createChapter({
         timelineName: 'test-timeline',
@@ -389,6 +415,33 @@ describe('Tracker', () => {
         title: 'Updated',
       });
       expect(updated.title).toBe('Updated');
+    });
+
+    it('should update chapter with optional fields', async () => {
+      await tracker.createChapter({
+        timelineName: 'test-timeline',
+        arcName: 'arc-1',
+        episodeNumber: 1,
+        partNumber: 1,
+        number: 1,
+        pov: 'Alice',
+        title: 'Original',
+        date: new Date('2024-01-01'),
+        excerpt: 'Test',
+        location: 'Test',
+        words: 1000,
+        characters: 5000,
+        charactersNoSpaces: 4000,
+        paragraphs: 10,
+        sentences: 50,
+        readingTimeMinutes: 5,
+      });
+      const updated = await tracker.updateChapter('test-timeline', 'arc-1', 1, 1, {
+        outfit: 'Blue dress',
+        kink: 'fantasy',
+      });
+      expect(updated.outfit).toBe('Blue dress');
+      expect(updated.kink).toBe('fantasy');
     });
 
     it('should delete chapter', async () => {
