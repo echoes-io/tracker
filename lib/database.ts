@@ -1,65 +1,30 @@
+import type { Arc, Chapter, Episode, Part, Timeline } from '@echoes-io/models';
 import type { Generated } from 'kysely';
 
-export interface TimelineTable {
-  id: Generated<number>;
-  name: string;
-  description: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
+// Database-specific fields (timestamps only)
+interface DatabaseFields {
+  createdAt: Generated<string>;
+  updatedAt: Generated<string>;
 }
 
-export interface ArcTable {
-  id: Generated<number>;
-  timeline_id: number;
-  name: string;
-  number: number;
-  description: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
+// Timeline: PK = name
+export interface TimelineTable extends Timeline, DatabaseFields {}
 
-export interface EpisodeTable {
-  id: Generated<number>;
-  arc_id: number;
-  number: number;
-  slug: string;
-  title: string;
-  description: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
+// Arc: PK = (timelineName, name)
+export interface ArcTable extends Arc, DatabaseFields {}
 
-export interface PartTable {
-  id: Generated<number>;
-  episode_id: number;
-  number: number;
-  slug: string;
-  title: string;
-  description: string | null;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
-}
+// Episode: PK = (timelineName, arcName, number)
+export interface EpisodeTable extends Episode, DatabaseFields {}
 
-export interface ChapterTable {
-  id: Generated<number>;
-  episode_id: number;
-  part_id: number | null;
-  number: number;
-  pov: string;
-  title: string;
-  date: string;
-  excerpt: string;
-  location: string;
-  outfit: string | null;
+// Part: PK = (timelineName, arcName, episodeNumber, number)
+export interface PartTable extends Part, DatabaseFields {}
+
+// Chapter: PK = (timelineName, arcName, episodeNumber, number)
+// Only adapt types for storage (Date → string, optional → null)
+export interface ChapterTable extends Omit<Chapter, 'date' | 'outfit' | 'kink'>, DatabaseFields {
+  date: string; // Stored as ISO string
+  outfit: string | null; // Optional fields stored as null
   kink: string | null;
-  words: number;
-  characters: number;
-  characters_no_spaces: number;
-  paragraphs: number;
-  sentences: number;
-  reading_time_minutes: number;
-  created_at: Generated<string>;
-  updated_at: Generated<string>;
 }
 
 export interface Database {

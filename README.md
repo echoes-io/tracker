@@ -600,11 +600,13 @@ All relationships use foreign keys with `ON DELETE CASCADE`, ensuring referentia
 
 ### Tables
 
-- **timeline**: `id`, `name` (unique), `description`, `created_at`, `updated_at`
-- **arc**: `id`, `timeline_id` (FK), `name`, `number`, `description`, `created_at`, `updated_at`
-- **episode**: `id`, `arc_id` (FK), `number`, `slug`, `title`, `description`, `created_at`, `updated_at`
-- **part**: `id`, `episode_id` (FK), `number`, `slug`, `title`, `description`, `created_at`, `updated_at`
-- **chapter**: `id`, `episode_id` (FK), `part_id` (FK, nullable), `number`, `pov`, `title`, `date`, `excerpt`, `location`, `outfit`, `kink`, `words`, `characters`, `characters_no_spaces`, `paragraphs`, `sentences`, `reading_time_minutes`, `created_at`, `updated_at`
+All column names use camelCase for consistency with TypeScript/JavaScript conventions:
+
+- **timeline**: `id`, `name` (unique), `description`, `createdAt`, `updatedAt`
+- **arc**: `id`, `timelineId` (FK), `name`, `number`, `description`, `createdAt`, `updatedAt`
+- **episode**: `id`, `arcId` (FK), `number`, `slug`, `title`, `description`, `createdAt`, `updatedAt`
+- **part**: `id`, `episodeId` (FK), `number`, `slug`, `title`, `description`, `createdAt`, `updatedAt`
+- **chapter**: `id`, `episodeId` (FK), `partId` (FK, nullable), `number`, `pov`, `title`, `date`, `excerpt`, `location`, `outfit`, `kink`, `words`, `characters`, `charactersNoSpaces`, `paragraphs`, `sentences`, `readingTimeMinutes`, `createdAt`, `updatedAt`
 
 ### Indexes
 
@@ -708,6 +710,63 @@ await tracker.createChapter({
 - **Sync services**: Populate database from filesystem
 - **Web applications**: Query content for display
 - **RAG/semantic search**: Index content for search
+
+## Database Migrations
+
+The tracker uses an automatic migration system. Migrations run automatically when you call `tracker.init()`.
+
+### How It Works
+
+- Migrations are stored in the `migrations/` directory
+- Each migration file follows the pattern `XXX_description.ts` (e.g., `001_initial.ts`)
+- Executed migrations are tracked in the `_migrations` table
+- Only pending migrations run on initialization
+- Each migration runs in a transaction (atomic)
+- Migrations execute in alphabetical order
+
+### Creating a Migration
+
+To add a new migration, create a file in `migrations/` with the next number:
+
+```typescript
+// migrations/002_add_tags.ts
+import type { Kysely } from 'kysely';
+import type { Database } from '../lib/database.js';
+
+export async function up(db: Kysely<Database>): Promise<void> {
+  // Apply changes
+  await db.schema
+    .createTable('tags')
+    .addColumn('name', 'text', (col) => col.primaryKey())
+    .addColumn('description', 'text')
+    .execute();
+}
+
+export async function down(db: Kysely<Database>): Promise<void> {
+  // Rollback changes (for manual recovery if needed)
+  await db.schema.dropTable('tags').execute();
+}
+```
+
+The migration will run automatically the next time `tracker.init()` is called.
+
+### Best Practices
+
+- **Keep migrations small** - One logical change per migration
+- **Always provide `down()`** - For potential manual rollbacks
+- **Never modify deployed migrations** - Create a new migration instead
+- **Test on a copy** - Test migrations on a database copy before production
+- **Use descriptive names** - `002_add_user_roles.ts` not `002_update.ts`
+
+### Migration Structure
+
+```
+migrations/
+├── index.ts           # Migration runner (automatic)
+├── 001_initial.ts     # Initial schema
+├── 002_add_tags.ts    # Add tags feature
+└── 003_add_indexes.ts # Performance improvements
+```
 
 ## Development
 
