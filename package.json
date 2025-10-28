@@ -14,7 +14,7 @@
   ],
   "scripts": {
     "lint": "concurrently npm:lint:* --prefixColors auto",
-    "lint:fix": "biome check --write",
+    "lint:format": "biome check --write",
     "lint:lockfile": "lockfile-lint --path package-lock.json",
     "lint:engines": "ls-engines",
     "lint:publish": "publint --strict",
