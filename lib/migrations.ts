@@ -36,7 +36,7 @@ async function loadMigrations(): Promise<Map<string, Migration>> {
   const seen = new Set<string>();
 
   // Sort to prefer .ts over .js (001_initial.ts comes before 001_initial.js)
-  for (const file of files.sort().reverse()) {
+  for (const file of files.sort()) {
     // Match only .ts or .js files, but exclude .d.ts
     if (file.match(/^\d{3}_.*\.(?:ts|js)$/) && !file.endsWith('.d.ts')) {
       const name = file.replace(/\.(ts|js)$/, '');

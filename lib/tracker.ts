@@ -698,8 +698,8 @@ export class Tracker {
    *   number: 1,
    *   pov: 'Alice',
    *   title: 'Chapter 1',
-   *   date: new Date('2024-01-01'),
-   *   excerpt: 'Alice wakes up...',
+   *   date: '2024-01-01 Monday',
+   *   summary: 'Alice wakes up...',
    *   location: 'Enchanted Forest',
    *   words: 1500,
    *   characters: 7500,
@@ -712,16 +712,23 @@ export class Tracker {
    */
   async createChapter(data: Chapter): Promise<Chapter> {
     const validated = ChapterSchema.parse(data);
+    const { timeline, arc, episode, part, chapter, ...dbData } = validated as any;
     await this.db
       .insertInto('chapter')
       .values({
-        ...validated,
-        date: validated.date.toISOString(),
+        ...dbData,
         outfit: validated.outfit ?? null,
         kink: validated.kink ?? null,
       })
       .execute();
-    return validated;
+    return {
+      ...validated,
+      timeline: validated.timelineName,
+      arc: validated.arcName,
+      episode: validated.episodeNumber,
+      part: validated.partNumber,
+      chapter: validated.number,
+    };
   }
 
   /**
@@ -766,10 +773,15 @@ export class Tracker {
       episodeNumber: r.episodeNumber,
       partNumber: r.partNumber,
       number: r.number,
+      timeline: r.timelineName,
+      arc: r.arcName,
+      episode: r.episodeNumber,
+      part: r.partNumber,
+      chapter: r.number,
       pov: r.pov,
       title: r.title,
-      date: new Date(r.date),
-      excerpt: r.excerpt,
+      date: r.date,
+      summary: r.summary,
       location: r.location,
       outfit: r.outfit ?? undefined,
       kink: r.kink ?? undefined,
@@ -821,10 +833,15 @@ export class Tracker {
           episodeNumber: row.episodeNumber,
           partNumber: row.partNumber,
           number: row.number,
+          timeline: row.timelineName,
+          arc: row.arcName,
+          episode: row.episodeNumber,
+          part: row.partNumber,
+          chapter: row.number,
           pov: row.pov,
           title: row.title,
-          date: new Date(row.date),
-          excerpt: row.excerpt,
+          date: row.date,
+          summary: row.summary,
           location: row.location,
           outfit: row.outfit ?? undefined,
           kink: row.kink ?? undefined,
@@ -867,7 +884,6 @@ export class Tracker {
   ): Promise<Chapter> {
     const validated = ChapterSchema.partial().parse(data);
     const updateData: any = { ...validated };
-    if (validated.date) updateData.date = validated.date.toISOString();
     if ('outfit' in validated) updateData.outfit = validated.outfit ?? null;
     if ('kink' in validated) updateData.kink = validated.kink ?? null;
 

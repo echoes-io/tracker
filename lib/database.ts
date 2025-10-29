@@ -20,10 +20,12 @@ export interface EpisodeTable extends Episode, DatabaseFields {}
 export interface PartTable extends Part, DatabaseFields {}
 
 // Chapter: PK = (timelineName, arcName, episodeNumber, number)
-// Only adapt types for storage (Date → string, optional → null)
-export interface ChapterTable extends Omit<Chapter, 'date' | 'outfit' | 'kink'>, DatabaseFields {
-  date: string; // Stored as ISO string
-  outfit: string | null; // Optional fields stored as null
+// Exclude ChapterMetadata fields that duplicate foreign keys (timeline, arc, episode, part, chapter)
+// and handle optional fields as null
+export interface ChapterTable
+  extends Omit<Chapter, 'timeline' | 'arc' | 'episode' | 'part' | 'chapter' | 'outfit' | 'kink'>,
+    DatabaseFields {
+  outfit: string | null;
   kink: string | null;
 }
 
