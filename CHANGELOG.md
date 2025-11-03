@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/echoes-io/tracker/compare/v1.0.1...v1.0.2) (2025-11-03)
+
+
+### Performance Improvements
+
+* :arrow_up: Upped deps ([861fb87](https://github.com/echoes-io/tracker/commit/861fb877a8aa2f9a24e0a6bb0ea9c5b4badc20b4))
+
 ## [1.0.1](https://github.com/echoes-io/tracker/compare/v1.0.0...v1.0.1) (2025-10-29)
 
 
