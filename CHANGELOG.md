@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/echoes-io/tracker/compare/v1.1.0...v1.2.0) (2025-12-12)
+
+
+### Features
+
+* rename agent from 'default' to 'dev' and add code tool ([8c3a08c](https://github.com/echoes-io/tracker/commit/8c3a08c529a5ae8d42677cdcf96298304334f4a7))
+
 # [1.1.0](https://github.com/echoes-io/tracker/compare/v1.0.2...v1.1.0) (2025-12-03)
 
 
